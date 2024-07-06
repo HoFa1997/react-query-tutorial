@@ -1,8 +1,16 @@
+import { newBooth } from "@/services/booth";
 import { NewBooth } from "@/services/booth/types";
 import { Button, Modal, Stack, TextField } from "@mui/material";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useReducer, useState } from "react";
 
 export const NewBoothForm = () => {
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: newBooth,
+  });
+
   const [open, toggle] = useReducer((state) => !state, false);
   const [formData, setFormData] = useState<NewBooth>({
     typeOfParticipation: "",
@@ -25,19 +33,20 @@ export const NewBoothForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // mutate(
-    //   {
-    //     ...formData,
-    //     earlyPrice: Number(formData.earlyPrice),
-    //     normalPrice: Number(formData.normalPrice),
-    //     latePrice: Number(formData.latePrice),
-    //   },
-    //   {
-    //     onSuccess: () => {
-    //       toggle();
-    //     },
-    //   }
-    // );
+    mutate(
+      {
+        ...formData,
+        earlyPrice: Number(formData.earlyPrice),
+        normalPrice: Number(formData.normalPrice),
+        latePrice: Number(formData.latePrice),
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["booth-list"] });
+          toggle();
+        },
+      }
+    );
   };
   return (
     <>
@@ -108,7 +117,7 @@ export const NewBoothForm = () => {
               onChange={handleChange}
             />
             <Button fullWidth type="submit" variant="contained" sx={{ mt: 2 }}>
-              دخیره
+              {isPending ? "loading" : "دخیره"}
             </Button>
           </form>
         </Stack>
