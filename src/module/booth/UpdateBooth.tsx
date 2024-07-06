@@ -8,7 +8,7 @@ import { useEffect, useReducer, useState } from "react";
 export const UpdateBoothForm = () => {
   const id = useParams().id as string;
 
-  const { data, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ["booth-by-id", id],
     queryFn: () => getBoothById(id),
   });
@@ -32,7 +32,7 @@ export const UpdateBoothForm = () => {
   });
 
   useEffect(() => {
-    if (!isLoading && data?.data) {
+    if (data?.data) {
       setFormData({
         typeOfParticipation: data?.data.typeOfParticipation || "",
         type: data?.data.type || "",
@@ -44,7 +44,7 @@ export const UpdateBoothForm = () => {
         description: data?.data.description || "",
       });
     }
-  }, [data, isLoading]);
+  }, [data]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
