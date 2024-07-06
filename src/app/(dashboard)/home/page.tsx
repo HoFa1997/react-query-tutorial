@@ -1,10 +1,13 @@
 "use client";
 import { NewBoothForm } from "@/module/booth/NewBooth";
 import { getBoothList } from "@/services/booth";
-import { Stack, Typography } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const { push } = useRouter();
+
   const { data, isLoading } = useQuery({
     queryKey: ["booth-list"],
     queryFn: getBoothList,
@@ -18,9 +21,9 @@ export default function Home() {
         {data &&
           !isLoading &&
           data?.data.map((booth) => (
-            <Typography key={booth?._id}>
+            <Button key={booth?._id} onClick={() => push(`/home/${booth._id}`)}>
               {booth?.typeOfParticipation}
-            </Typography>
+            </Button>
           ))}
       </Stack>
     </Stack>
